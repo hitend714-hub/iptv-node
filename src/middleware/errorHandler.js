@@ -1,21 +1,21 @@
-import ApiResponse from "../utils/ApiResponse.js";
+import ApiResponse from '../utils/ApiResponse.js';
 
 export const errorHandler = (err, req, res, next) => {
   if (res.headersSent) {
     return next(err);
   }
 
-  console.error("Error:", err.message);
+  console.error('Error:', err.message);
 
   // IF MONGODB REQUIRED / VALIDATION ERROR
-  if (err.name === "ValidationError") {
+  if (err.name === 'ValidationError') {
     const messages = Object.values(err.errors).map((e) => e.message);
-    return ApiResponse.error(res, 400, messages.join(", "));
+    return ApiResponse.error(res, 400, messages.join(', '));
   }
 
   // IF CastError (Invalid ObjectId)
-  if (err.name === "CastError") {
-    return ApiResponse.error(res, 400, "Invalid ID format");
+  if (err.name === 'CastError') {
+    return ApiResponse.error(res, 400, 'Invalid ID format');
   }
 
   // IF MONGODB DUPLICATE KEY
@@ -37,9 +37,9 @@ export const errorHandler = (err, req, res, next) => {
   // Non-operational (unexpected) error
   const statusCode = err.statusCode || 500;
   const message =
-    process.env.NODE_ENV === "development"
-      ? err.message || "Internal Server Error"
-      : "Something went wrong on the server.";
+    process.env.NODE_ENV === 'development'
+      ? err.message || 'Internal Server Error'
+      : 'Something went wrong on the server.';
 
   return ApiResponse.error(res, statusCode, message, err);
 };

@@ -1,12 +1,12 @@
-import axios from "axios";
-import { ENV } from "../config/env.js";
-import { Channel } from "../modules/channels/channels.model.js";
-import { logger } from "../config/logger.js";
+import axios from 'axios';
+import { ENV } from '../config/env.js';
+import { Channel } from '../modules/channels/channels.model.js';
+import { logger } from '../config/logger.js';
 
-const CHANNELS_API = ENV.IPTV_BASE_URL + "/channels.json";
+const CHANNELS_API = ENV.IPTV_BASE_URL + '/channels.json';
 
 export const syncChannels = async () => {
-  logger.info("Fetching channels...");
+  logger.info('Fetching channels...');
 
   const { data } = await axios.get(CHANNELS_API);
 

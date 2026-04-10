@@ -1,8 +1,8 @@
-import ApiResponse from "../../utils/ApiResponse.js";
-import catchAsync from "../../utils/catchAsync.js";
-import { logger } from "../../config/logger.js";
+import ApiResponse from '../../utils/ApiResponse.js';
+import catchAsync from '../../utils/catchAsync.js';
+import { logger } from '../../config/logger.js';
 
-import * as channelService from "./channels.service.js";
+import * as channelService from './channels.service.js';
 
 /**
  * Get Channels from stream url and parse them
@@ -11,11 +11,11 @@ import * as channelService from "./channels.service.js";
  * @returns
  */
 export const getChannels = catchAsync(async (req, res) => {
-  logger.info("getChannels called");
+  logger.info('getChannels called');
 
   const data = await channelService.getChannels();
 
-  ApiResponse.success(res, 200, "Channels Retrieved Successfully", data);
+  ApiResponse.success(res, 200, 'Channels Retrieved Successfully', data);
 });
 
 /**
@@ -25,9 +25,9 @@ export const getChannels = catchAsync(async (req, res) => {
  * @return
  */
 export const getChannelsList = catchAsync(async (req, res) => {
-  logger.info("getChannelsList called");
+  logger.info('getChannelsList called');
 
   const data = await channelService.getChannelsList(req.query);
 
-  ApiResponse.success(res, 200, "Channel List Retrieved Successfully", data);
+  ApiResponse.success(res, 200, 'Channel List Retrieved Successfully', data);
 });

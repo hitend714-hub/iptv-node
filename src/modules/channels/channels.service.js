@@ -1,6 +1,6 @@
-import axios from "axios";
-import { Channel } from "./channels.model.js";
-import { ENV } from "../../config/env.js";
+import axios from 'axios';
+import { Channel } from './channels.model.js';
+import { ENV } from '../../config/env.js';
 
 /**
  * Get Channels from stream url and parse them
@@ -9,7 +9,7 @@ import { ENV } from "../../config/env.js";
 export const getChannels = async () => {
   const response = await axios.get(ENV.IPTV_STREAM_URL);
 
-  const lines = response.data.split("\n");
+  const lines = response.data.split('\n');
 
   const channels = [];
   let currentChannel = {};
@@ -17,17 +17,17 @@ export const getChannels = async () => {
   for (let line of lines) {
     line = line.trim();
 
-    if (line.startsWith("#EXTINF")) {
+    if (line.startsWith('#EXTINF')) {
       const nameMatch = line.match(/,(.*)$/);
       const logoMatch = line.match(/tvg-logo="(.*?)"/);
       const groupMatch = line.match(/group-title="(.*?)"/);
 
       currentChannel = {
-        name: nameMatch ? nameMatch[1] : "",
-        logo: logoMatch ? logoMatch[1] : "",
-        group: groupMatch ? groupMatch[1] : "",
+        name: nameMatch ? nameMatch[1] : '',
+        logo: logoMatch ? logoMatch[1] : '',
+        group: groupMatch ? groupMatch[1] : '',
       };
-    } else if (line && !line.startsWith("#")) {
+    } else if (line && !line.startsWith('#')) {
       currentChannel.url = line;
       channels.push(currentChannel);
       currentChannel = {};
@@ -47,25 +47,28 @@ export const getChannelsList = async (query) => {
 
   const filter = {};
 
-  //  Search by name
+  // Search by name OR alt_names
   if (search) {
-    filter.name = { $regex: search, $options: "i" };
+    filter.$or = [
+      { name: { $regex: search, $options: 'i' } },
+      { alt_names: { $regex: search, $options: 'i' } },
+    ];
   }
 
   // Filter by country
   if (country) {
-    filter.country = country;
+    filter.country = { $regex: `^${country}$`, $options: 'i' }; // case-insensitive exact match
   }
 
-  // Filter by category
+  // Filter by category (array field)
   if (category) {
-    filter.category = category;
+    filter.categories = { $in: [category] };
   }
 
-  // Only active channels
-  filter.closed = null;
+  // Only active channels (not closed)
+  filter.$or = [{ closed: null }, { closed: { $exists: false } }];
 
-  const skip = (page - 1) * limit;
+  const skip = (Number(page) - 1) * Number(limit);
 
   const [channels, total] = await Promise.all([
     Channel.find(filter).skip(skip).limit(Number(limit)).sort({ name: 1 }),
@@ -74,7 +77,7 @@ export const getChannelsList = async (query) => {
   ]);
 
   return {
-    channels: channels,
+    channels,
     pagination: {
       total,
       page: Number(page),

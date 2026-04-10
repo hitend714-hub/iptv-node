@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const channelSchema = new mongoose.Schema(
   {
@@ -21,4 +21,4 @@ const channelSchema = new mongoose.Schema(
 channelSchema.index({ country: 1 });
 channelSchema.index({ categories: 1 });
 
-export const Channel = mongoose.model("Channel", channelSchema);
+export const Channel = mongoose.model('Channel', channelSchema);
